@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Irregular Manga – Verbes irréguliers anglais</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="manifest.webmanifest.json">
+  <style>
+    body { 
+      font-family: 'Segoe UI', Arial, sans-serif; 
+      background: linear-gradient(135deg, #ffdde1 0%, #c2e9fb 100%); 
+      min-height: 100vh; 
+      margin: 0; 
+      padding: 0; 
+      touch-action: manipulation; /* améliore la réactivité tactile */
+    }
+    .container { 
+      background: #fff; 
+      border-radius: 1.5rem; 
+      box-shadow: 0 8px 32px rgba(70,0,80,0.16); 
+      max-width: 500px; 
+      width: 90%; /* réduit la largeur pour éviter les débordements */ 
+      margin: 1rem auto; 
+      padding: 1.5rem 1rem; 
+      text-align: center; 
+      position: relative; 
+    }
+    h1 { 
+      font-size: 1.7rem; 
+      margin: 0.6rem 0 0.3rem 0; 
+      color: #7b1fa2; 
+      font-family: 'Trebuchet MS', Arial, sans-serif; 
+      text-shadow: 1px 1px 0 #f5eaff;
+    }
+    .avatar-list { 
+      display: flex; 
+      flex-wrap: wrap; 
+      justify-content: center; 
+      gap: 0.6rem; 
+      margin: 1rem 0; 
+    }
+    .avatar-choice { 
+      border-radius: 50%; 
+      border: 3px solid #7b1fa2; 
+      width: 60px; 
+      height: 60px; 
+      cursor: pointer; 
+      transition: box-shadow 0.2s, border-color 0.2s;
+      -webkit-tap-highlight-color: transparent; /* supprime le flash tactile */
+    }
+    .avatar-choice.selected, .avatar-choice:hover, .avatar-choice:active { 
+      box-shadow: 0 0 0 4px #b39ddb; 
+      border-color: #1976d2; 
+    }
+    .menu { 
+      display: flex; 
+      flex-wrap: wrap; /* permet le retour à la ligne sur petit écran */
+      gap: 0.6rem; 
+      margin-bottom: 1.3rem; 
+      justify-content: center;
+    }
+    .menu-btn { 
+      background: #fff7fc; 
+      color: #7b1fa2; 
+      border: 2px solid #7b1fa2; 
+      border-radius: 1.2rem; 
+      padding: 0.5rem 1.1rem; 
+      font-weight: bold; 
+      cursor: pointer; 
+      transition: background 0.16s;
+      min-width: 80px; /* taille minimum pour une meilleure zone tactile */
+      -webkit-tap-highlight-color: transparent;
+    }
+    .menu-btn.active, .menu-btn:hover, .menu-btn:active { 
+      background: linear-gradient(90deg, #7b1fa2, #1976d2); 
+      color: #fff; 
+    }
+    .user-avatar { 
+      width: 50px; 
+      height: 50px; 
+      border-radius: 50%; 
+      border: 2px solid #1976d2; 
+      margin-bottom: 0.2rem; 
+    }
+    .verbe-base { 
+      font-size: 1.4rem; 
+      font-weight: bold; 
+      color: #0288d1; 
+      margin: 1rem 0 0.3rem 0;
+    }
+    .quiz-field, .revise-field { 
+      margin: 0.7rem 0; 
+      font-size: 1.05rem; 
+      color: #31344b; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      gap: 0.8rem; 
+    }
+    .quiz-label { 
+      flex: 1; 
+      text-align: left; 
+      color: #7b1fa2; 
+    }
+    .quiz-input { 
+      flex: 2; 
+      background: #ece0f7; 
+      padding: 0.5rem 0.7rem; 
+      border-radius: 0.8rem; 
+      font-size: 1.05rem; 
+      border: 1px solid #b39ddb; 
+      max-width: 100%;
+      box-sizing: border-box; /* empêche le dépassement */
+    }
+    .revise-answer { 
+      flex: 2; 
+      background: #fff5e1; 
+      padding: 0.44rem 0.75rem; 
+      border-radius: 0.7rem; 
+      font-size: 1rem; 
+      color: #1565c0; 
+      font-weight: 600;
+    }
+    .translation { 
+      font-size: 1.05rem; 
+      color: #6d4c41; 
+      font-style: italic; 
+      margin: 0.5rem 0 0; 
+      background: #ffe0b2; 
+      border-radius: 0.7rem; 
+      display: inline-block; 
+      padding: 0.28rem 0.8rem; 
+    }
+    .btn-main, .btn-secondary { 
+      background: linear-gradient(90deg, #7b1fa2, #1976d2); 
+      color: #fff; 
+      font-weight: bold; 
+      border: none; 
+      border-radius: 1.1rem; 
+      padding: 0.7rem 1.3rem; /* zone tactile plus grande */
+      font-size: 1.04rem; 
+      margin: 0.9rem 0.2rem 0; 
+      box-shadow: 0 2px 12px #eee; 
+      cursor: pointer; 
+      transition: background 0.17s;
+      min-width: 90px; /* taille minimum tactile */
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-main:hover, .btn-main:active { 
+      background: linear-gradient(90deg, #b388ff, #82b1ff); 
+      color: #2d1357;
+    }
+    .btn-secondary { 
+      background: #fff4fc; 
+      color: #7b1fa2; 
+      border: 1.5px solid #7b1fa2; 
+      font-weight: 500;
+    }
+    .feedback { 
+      margin-top: 0.7rem; 
+      font-weight: bold; 
+      font-size: 1.09rem;
+    }
+    .feedback.good { 
+      color: #388e3c;
+    }
+    .feedback.bad { 
+      color: #d84315;
+    }
+    .counter, .score { 
+      color: #666; 
+      font-size: 1rem; 
+      margin: 0.8rem 0 0.5rem 0;
+      font-weight: 500;
+    }
+    .badge-list { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 0.5rem; 
+      justify-content: center; 
+      margin-top: 1rem;
+    }
+    .badge { 
+      background: linear-gradient(120deg,#b2ff59,#e1bee7,#80d8ff); 
+      border-radius: 0.8rem; 
+      padding: 0.38rem 1.1rem; 
+      font-weight: 600; 
+      color: #333; 
+      font-size: 0.96rem; 
+      box-shadow: 0 1px 4px #eee; 
+    }
+    .stat-row { 
+      display: flex; 
+      justify-content: space-between; 
+      margin: 0.38rem 0; 
+      font-size: 1rem;
+      padding: 0 0.5rem;
+    }
+    .btn-home { 
+      position: absolute; 
+      top: 0.5rem; 
+      right: 0.8rem; 
+      background: #fffde7; 
+      color: #7b1fa2; 
+      border: 2px solid #ffd54f; 
+      border-radius: 1.1rem; 
+      padding: 0.25rem 0.9rem; 
+      font-size: 1rem; 
+      cursor: pointer; 
+      transition: background 0.17s, color 0.18s; 
+      box-shadow: 0 2px 10px #f7e5ff;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-home:hover, .btn-home:active { 
+      background: #ffe0b2; 
+      color: #f57c00; 
+      border-color: #fbc02d;
+    }
+
+    /* Optimisations spécifiques pour mobile */
+    @media (max-width: 520px) {
+      .container { 
+        width: 95%; 
+        padding: 1.2rem 0.8rem; 
+        margin: 0.5rem auto;
+        border-radius: 1.2rem;
+      }
+      h1 { 
+        font-size: 1.4rem;
+        margin-top: 0.8rem;
+      }
+      .verbe-base { 
+        font-size: 1.25rem;
+      }
+      .quiz-field, .revise-field {
+        margin: 0.8rem 0;
+        padding: 0 0.3rem;
+      }
+      .quiz-label { 
+        font-size: 0.95rem;
+      }
+      .quiz-input { 
+        font-size: 1rem;
+        padding: 0.5rem;
+        width: 100%;
+      }
+      .revise-answer {
+        font-size: 0.95rem;
+        padding: 0.4rem 0.6rem;
+      }
+      .btn-main, .btn-secondary { 
+        font-size: 1rem;
+        padding: 0.7rem 1.1rem;
+        margin: 0.8rem 0.15rem 0;
+      }
+      .avatar-choice {
+        width: 55px;
+        height: 55px;
+      }
+      .btn-home {
+        top: 0.4rem;
+        right: 0.5rem;
+        padding: 0.2rem 0.7rem;
+        font-size: 0.9rem;
+      }
+      .menu {
+        flex-wrap: wrap;
+      }
+      .menu-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.95rem;
+        margin-bottom: 0.3rem;
+      }
+      .translation {
+        font-size: 0.95rem; 
+      }
+    }
+
+    /* Désactiver le zoom sur les champs de formulaire sur iOS */
+    @media screen and (-webkit-min-device-pixel-ratio:0) { 
+      select, textarea, input[type="text"], input[type="password"],
+      input[type="datetime"], input[type="datetime-local"],
+      input[type="date"], input[type="month"], input[type="time"],
+      input[type="week"], input[type="number"], input[type="email"],
+      input[type="url"]{ font-size: 16px; }
+    }
+
+    /* Animation de feedback */
+    @keyframes pulsate {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .feedback { animation: pulsate 0.5s ease-in-out; }
+  </style>
+</head>
+<body>
+<div class="container" id="app"></div>
+<script>
+const avatars = [
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=study",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=book",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=cat",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=fox",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=dragon",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=ninja",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=panda",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=sky",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=music",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=hero"
+];
+
+const verbs = [
+  {base:"arise",past:"arose",part:"arisen",fr:"s'élever, survenir"},
+  {base:"awake",past:"awoke",part:"awoken",fr:"(se) réveiller"},
+  {base:"be",past:"was/were",part:"been",fr:"être"},
+  {base:"bear",past:"bore",part:"borne",fr:"porter, supporter"},
+  {base:"beat",past:"beat",part:"beaten",fr:"battre"},
+  {base:"become",past:"became",part:"become",fr:"devenir"},
+  {base:"begin",past:"began",part:"begun",fr:"commencer"},
+  {base:"bend",past:"bent",part:"bent",fr:"plier, courber"},
+  {base:"bet",past:"bet",part:"bet",fr:"parier"},
+  {base:"bid",past:"bid",part:"bid",fr:"offrir (prix), enchérir"},
+  {base:"bind",past:"bound",part:"bound",fr:"lier, relier"},
+  {base:"bite",past:"bit",part:"bitten",fr:"mordre"},
+  {base:"bleed",past:"bled",part:"bled",fr:"saigner"},
+  {base:"blow",past:"blew",part:"blown",fr:"souffler"},
+  {base:"break",past:"broke",part:"broken",fr:"casser"},
+  {base:"breed",past:"bred",part:"bred",fr:"élever (animaux)"},
+  {base:"bring",past:"brought",part:"brought",fr:"apporter"},
+  {base:"broadcast",past:"broadcast",part:"broadcast",fr:"diffuser"},
+  {base:"build",past:"built",part:"built",fr:"construire"},
+  {base:"burn",past:"burnt/burned",part:"burnt/burned",fr:"brûler"},
+  {base:"burst",past:"burst",part:"burst",fr:"éclater"},
+  {base:"buy",past:"bought",part:"bought",fr:"acheter"},
+  {base:"cast",past:"cast",part:"cast",fr:"jeter, lancer"},
+  {base:"catch",past:"caught",part:"caught",fr:"attraper"},
+  {base:"choose",past:"chose",part:"chosen",fr:"choisir"},
+  {base:"cling",past:"clung",part:"clung",fr:"s'accrocher"},
+  {base:"come",past:"came",part:"come",fr:"venir"},
+  {base:"cost",past:"cost",part:"cost",fr:"coûter"},
+  {base:"creep",past:"crept",part:"crept",fr:"ramper, se glisser"},
+  {base:"cut",past:"cut",part:"cut",fr:"couper"},
+  {base:"deal",past:"dealt",part:"dealt",fr:"distribuer, traiter de"},
+  {base:"dig",past:"dug",part:"dug",fr:"creuser"},
+  {base:"do",past:"did",part:"done",fr:"faire"},
+  {base:"draw",past:"drew",part:"drawn",fr:"dessiner, tirer"},
+  {base:"dream",past:"dreamt/dreamed",part:"dreamt/dreamed",fr:"rêver"},
+  {base:"drink",past:"drank",part:"drunk",fr:"boire"},
+  {base:"drive",past:"drove",part:"driven",fr:"conduire"},
+  {base:"eat",past:"ate",part:"eaten",fr:"manger"},
+  {base:"fall",past:"fell",part:"fallen",fr:"tomber"},
+  {base:"feed",past:"fed",part:"fed",fr:"nourrir"},
+  {base:"feel",past:"felt",part:"felt",fr:"ressentir"},
+  {base:"fight",past:"fought",part:"fought",fr:"se battre"},
+  {base:"find",past:"found",part:"found",fr:"trouver"},
+  {base:"flee",past:"fled",part:"fled",fr:"fuir"},
+  {base:"fly",past:"flew",part:"flown",fr:"voler (air)"},
+  {base:"forbid",past:"forbade",part:"forbidden",fr:"interdire"},
+  {base:"forget",past:"forgot",part:"forgotten",fr:"oublier"},
+  {base:"forgive",past:"forgave",part:"forgiven",fr:"pardonner"},
+  {base:"freeze",past:"froze",part:"frozen",fr:"geler"},
+  {base:"get",past:"got",part:"got/gotten",fr:"obtenir"},
+  {base:"give",past:"gave",part:"given",fr:"donner"},
+  {base:"go",past:"went",part:"gone",fr:"aller"},
+  {base:"grind",past:"ground",part:"ground",fr:"moudre"},
+  {base:"grow",past:"grew",part:"grown",fr:"grandir, pousser"},
+  {base:"hang",past:"hung",part:"hung",fr:"pendre, suspendre"},
+  {base:"have",past:"had",part:"had",fr:"avoir"},
+  {base:"hear",past:"heard",part:"heard",fr:"entendre"},
+  {base:"hide",past:"hid",part:"hidden",fr:"cacher"},
+  {base:"hit",past:"hit",part:"hit",fr:"frapper"},
+  {base:"hold",past:"held",part:"held",fr:"tenir"},
+  {base:"hurt",past:"hurt",part:"hurt",fr:"blesser"},
+  {base:"keep",past:"kept",part:"kept",fr:"garder"},
+  {base:"kneel",past:"knelt/kneeled",part:"knelt/kneeled",fr:"s'agenouiller"},
+  {base:"know",past:"knew",part:"known",fr:"savoir, connaître"},
+  {base:"lay",past:"laid",part:"laid",fr:"poser à plat"},
+  {base:"lead",past:"led",part:"led",fr:"mener, conduire"},
+  {base:"lean",past:"leant/leaned",part:"leant/leaned",fr:"se pencher"},
+  {base:"leap",past:"leapt/leaped",part:"leapt/leaped",fr:"sauter"},
+  {base:"learn",past:"learnt/learned",part:"learnt/learned",fr:"apprendre"},
+  {base:"leave",past:"left",part:"left",fr:"quitter, laisser"},
+  {base:"lend",past:"lent",part:"lent",fr:"prêter"},
+  {base:"let",past:"let",part:"let",fr:"laisser"},
+  {base:"lie",past:"lay",part:"lain",fr:"être couché"},
+  {base:"light",past:"lit/lighted",part:"lit/lighted",fr:"allumer"},
+  {base:"lose",past:"lost",part:"lost",fr:"perdre"},
+  {base:"make",past:"made",part:"made",fr:"faire, fabriquer"},
+  {base:"mean",past:"meant",part:"meant",fr:"signifier, vouloir dire"},
+  {base:"meet",past:"met",part:"met",fr:"rencontrer"},
+  {base:"mow",past:"mowed",part:"mown/mowed",fr:"tondre"},
+  {base:"overcome",past:"overcame",part:"overcome",fr:"surmonter"},
+  {base:"pay",past:"paid",part:"paid",fr:"payer"},
+  {base:"prove",past:"proved",part:"proven/proved",fr:"prouver"},
+  {base:"put",past:"put",part:"put",fr:"mettre"},
+  {base:"quit",past:"quit",part:"quit",fr:"abandonner"},
+  {base:"read",past:"read",part:"read",fr:"lire"},
+  {base:"ride",past:"rode",part:"ridden",fr:"monter (à cheval, vélo)"},
+  {base:"ring",past:"rang",part:"rung",fr:"sonner"},
+  {base:"rise",past:"rose",part:"risen",fr:"s'élever"},
+  {base:"run",past:"ran",part:"run",fr:"courir"},
+  {base:"saw",past:"sawed",part:"sawn/sawed",fr:"scier"},
+  {base:"say",past:"said",part:"said",fr:"dire"},
+  {base:"see",past:"saw",part:"seen",fr:"voir"},
+  {base:"seek",past:"sought",part:"sought",fr:"chercher"},
+  {base:"sell",past:"sold",part:"sold",fr:"vendre"},
+  {base:"send",past:"sent",part:"sent",fr:"envoyer"},
+  {base:"set",past:"set",part:"set",fr:"poser, fixer"},
+  {base:"sew",past:"sewed",part:"sewn/sewed",fr:"coudre"},
+  {base:"shake",past:"shook",part:"shaken",fr:"secouer"},
+  {base:"shear",past:"sheared",part:"shorn/sheared",fr:"tondre"},
+  {base:"shine",past:"shone",part:"shone",fr:"briller"},
+  {base:"shoot",past:"shot",part:"shot",fr:"tirer"},
+  {base:"show",past:"showed",part:"shown/showed",fr:"montrer"},
+  {base:"shrink",past:"shrank",part:"shrunk",fr:"rétrécir"},
+  {base:"shut",past:"shut",part:"shut",fr:"fermer"},
+  {base:"sing",past:"sang",part:"sung",fr:"chanter"},
+  {base:"sink",past:"sank",part:"sunk",fr:"couler"},
+  {base:"sit",past:"sat",part:"sat",fr:"s'asseoir"},
+  {base:"sleep",past:"slept",part:"slept",fr:"dormir"},
+  {base:"slide",past:"slid",part:"slid",fr:"glisser"},
+  {base:"sling",past:"slung",part:"slung",fr:"lancer (avec force)"},
+  {base:"slit",past:"slit",part:"slit",fr:"fendre"},
+  {base:"smell",past:"smelt/smelled",part:"smelt/smelled",fr:"sentir (odeur)"},
+  {base:"sow",past:"sowed",part:"sown/sowed",fr:"semer"},
+  {base:"speak",past:"spoke",part:"spoken",fr:"parler"},
+  {base:"speed",past:"sped/speeded",part:"sped/speeded",fr:"aller vite"},
+  {base:"spell",past:"spelt/spelled",part:"spelt/spelled",fr:"épeler"},
+  {base:"spend",past:"spent",part:"spent",fr:"dépenser, passer (temps)"},
+  {base:"spill",past:"spilt/spilled",part:"spilt/spilled",fr:"renverser (liquide)"},
+  {base:"spin",past:"spun",part:"spun",fr:"tourner, filer (laine)"},
+  {base:"spit",past:"spat",part:"spat",fr:"cracher"},
+  {base:"split",past:"split",part:"split",fr:"fendre, diviser"},
+  {base:"spoil",past:"spoilt/spoiled",part:"spoilt/spoiled",fr:"gâcher"},
+  {base:"spread",past:"spread",part:"spread",fr:"étaler, répandre"},
+  {base:"spring",past:"sprang",part:"sprung",fr:"sauter, bondir"},
+  {base:"stand",past:"stood",part:"stood",fr:"se tenir debout"},
+  {base:"steal",past:"stole",part:"stolen",fr:"voler (dérober)"},
+  {base:"stick",past:"stuck",part:"stuck",fr:"coller"},
+  {base:"sting",past:"stung",part:"stung",fr:"piquer (insecte)"},
+  {base:"stink",past:"stank",part:"stunk",fr:"puer"},
+  {base:"stride",past:"strode",part:"stridden",fr:"marcher à grands pas"},
+  {base:"strike",past:"struck",part:"struck/stricken",fr:"frapper"},
+  {base:"string",past:"strung",part:"strung",fr:"enfiler, tendre (corde)"},
+  {base:"strive",past:"strove",part:"striven",fr:"s'efforcer"},
+  {base:"swear",past:"swore",part:"sworn",fr:"jurer"},
+  {base:"sweep",past:"swept",part:"swept",fr:"balayer"},
+  {base:"swell",past:"swelled",part:"swollen/swelled",fr:"gonfler"},
+  {base:"swim",past:"swam",part:"swum",fr:"nager"},
+  {base:"swing",past:"swung",part:"swung",fr:"se balancer"},
+  {base:"take",past:"took",part:"taken",fr:"prendre"},
+  {base:"teach",past:"taught",part:"taught",fr:"enseigner"},
+  {base:"tear",past:"tore",part:"torn",fr:"déchirer"},
+  {base:"tell",past:"told",part:"told",fr:"dire, raconter"},
+  {base:"think",past:"thought",part:"thought",fr:"penser"},
+  {base:"thrive",past:"throve/thrived",part:"thriven/thrived",fr:"prospérer"},
+  {base:"throw",past:"threw",part:"thrown",fr:"jeter"},
+  {base:"thrust",past:"thrust",part:"thrust",fr:"enfoncer"},
+  {base:"tread",past:"trod",part:"trodden",fr:"fouler, marcher sur"},
+  {base:"understand",past:"understood",part:"understood",fr:"comprendre"},
+  {base:"undertake",past:"undertook",part:"undertaken",fr:"entreprendre"},
+  {base:"upset",past:"upset",part:"upset",fr:"bouleverser"},
+  {base:"wake",past:"woke",part:"woken",fr:"(se) réveiller"},
+  {base:"wear",past:"wore",part:"worn",fr:"porter (vêtements)"},
+  {base:"weave",past:"wove",part:"woven",fr:"tisser"},
+  {base:"weep",past:"wept",part:"wept",fr:"pleurer"},
+  {base:"win",past:"won",part:"won",fr:"gagner"},
+  {base:"wind",past:"wound",part:"wound",fr:"enrouler"},
+  {base:"withdraw",past:"withdrew",part:"withdrawn",fr:"retirer"},
+  {base:"withstand",past:"withstood",part:"withstood",fr:"résister"},
+  {base:"wring",past:"wrung",part:"wrung",fr:"tordre"},
+  {base:"write",past:"wrote",part:"written",fr:"écrire"},
+  // ... jusqu'à 200, les plus rares sont en option selon l'usage
+];
+
+
+let state = {
+  screen: 'accueil',
+  avatar: null,
+  quiz: {
+    order: [],
+    current: 0,
+    score: 0,
+    streak: 0,
+    mastered: 0,
+    errors: 0,
+    seen: Array(verbs.length).fill(0),
+    badges: []
+  },
+  revision: { idx: 0 }
+};
+
+function saveProgress() {
+  localStorage.setItem("irregMangaState", JSON.stringify(state));
+}
+function loadProgress() {
+  let s = localStorage.getItem("irregMangaState");
+  if (s) { try { state = JSON.parse(s); } catch {} }
+}
+
+function btnAccueil() {
+  // bouton maison sur chaque page SAUF accueil
+  if(state.screen==="accueil") return "";
+  return `<button class="btn-home" id="btnAccueil" title="Retour accueil">🏠</button>`;
+}
+
+function accueil() {
+  document.getElementById("app").innerHTML = `
+    ${btnAccueil()}
+    <h1>Irregular Manga</h1>
+    <div style="font-size:1.1rem; color:#0288d1;">Choisis ton avatar manga :</div>
+    <div class="avatar-list">
+      ${avatars.map((av,i)=>`
+        <img src="${av}" class="avatar-choice${state.avatar===i?' selected':''}" data-idx="${i}" alt="avatar${i}">
+      `).join('')}
+    </div>
+    <button class="btn-main" id="startBtn" ${state.avatar===null?'disabled':''}>Commencer</button>
+    <div style="margin-top:1.5rem; font-size:1rem; color:#888;">Apprends et révise les verbes irréguliers anglais en t'amusant !</div>
+  `;
+  document.querySelectorAll('.avatar-choice').forEach(img=>{
+    img.onclick = e=>{
+      state.avatar = parseInt(img.dataset.idx);
+      saveProgress();
+      accueil();
+    }
+  });
+  document.getElementById("startBtn").onclick = ()=>{
+    setScreen('menu');
+  }
+  let btn = document.getElementById("btnAccueil");
+  if(btn) btn.onclick = ()=>{
+    // Reset tout si tu veux : sinon juste revenir accueil (progression gardée)
+    // localStorage.removeItem("irregMangaState");
+    state.screen="accueil";
+    state.avatar=null;
+    saveProgress();
+    accueil();
+  }
+}
+
+function menu() {
+  document.getElementById("app").innerHTML = `
+    ${btnAccueil()}
+    <img src="${avatars[state.avatar]}" class="user-avatar" alt="avatar">
+    <h1 style="margin-bottom:0.7rem;">Irregular Manga</h1>
+    <div class="menu">
+      <button class="menu-btn" id="btnQuiz">Quiz</button>
+      <button class="menu-btn" id="btnRevision">Révision</button>
+      <button class="menu-btn" id="btnProgress">Progression</button>
+    </div>
+    <div style="color:#444; font-size:1.06rem; margin:1.4rem 0 0.7rem 0;">
+      <b>Bienvenue !</b><br>
+      <span style="font-size:0.98rem;">Teste tes connaissances ou révise à ton rythme.</span>
+    </div>
+  `;
+  document.getElementById("btnQuiz").onclick = ()=>{
+    startQuiz();
+    setScreen("quiz");
+  }
+  document.getElementById("btnRevision").onclick = ()=>{
+    state.revision.idx = 0;
+    setScreen("revision");
+  }
+  document.getElementById("btnProgress").onclick = ()=>{
+    setScreen("progression");
+  }
+  let btn = document.getElementById("btnAccueil");
+  if(btn) btn.onclick = ()=>{
+    state.screen="accueil";
+    saveProgress();
+    accueil();
+  }
+}
+
+function startQuiz() {
+  let arr = [...Array(verbs.length).keys()];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  state.quiz.order = arr;
+  state.quiz.current = 0;
+  state.quiz.score = 0;
+  state.quiz.streak = 0;
+  state.quiz.errors = 0;
+  state.quiz.mastered = 0;
+  saveProgress();
+}
+
+function quiz() {
+  let cur = state.quiz.order[state.quiz.current];
+  let verb = verbs[cur];
+  document.getElementById("app").innerHTML = `
+    ${btnAccueil()}
+    <div style="display:flex;align-items:center;justify-content:center;margin-bottom:0.7rem;">
+      <img src="${avatars[state.avatar]}" class="user-avatar" alt="avatar">
+      <div style="flex:1;"></div>
+      <div class="score">Score : <b>${state.quiz.score}</b> | Série : ${state.quiz.streak}</div>
+    </div>
+    <div class="verbe-base">Verbe : <span style="color:#7b1fa2;">${verb.base}</span></div>
+    <form id="quizForm">
+      <div class="quiz-field">
+        <span class="quiz-label">Prétérit :</span>
+        <input class="quiz-input" autocomplete="off" id="inpPast" required>
+      </div>
+      <div class="quiz-field">
+        <span class="quiz-label">Participe passé :</span>
+        <input class="quiz-input" autocomplete="off" id="inpPart" required>
+      </div>
+      <button class="btn-main" type="submit">Valider</button>
+      <button class="btn-secondary" type="button" id="btnSkip">Passer</button>
+    </form>
+    <div class="counter">${state.quiz.current+1} / ${verbs.length}</div>
+    <div id="quizFeedback"></div>
+  `;
+  
+  // Focus sur le premier champ au chargement
+  setTimeout(() => {
+    document.getElementById("inpPast").focus();
+  }, 100);
+  
+  document.getElementById("quizForm").onsubmit = function(e){
+    e.preventDefault();
+    let past = document.getElementById("inpPast").value.trim().toLowerCase();
+    let part = document.getElementById("inpPart").value.trim().toLowerCase();
+    let repPast = verb.past.toLowerCase();
+    let repPart = verb.part.toLowerCase();
+    let good = (past === repPast) && (part === repPart);
+    if (good) {
+      state.quiz.score++;
+      state.quiz.streak++;
+      if (state.quiz.streak>0 && state.quiz.streak%5==0 && !state.quiz.badges.includes(state.quiz.streak)) {
+        state.quiz.badges.push(state.quiz.streak);
+      }
+      if (state.quiz.seen[cur]===0) {state.quiz.mastered++;}
+      state.quiz.seen[cur]++;
+      quizFeedback(true, verb, ()=>nextQuiz());
+    } else {
+      state.quiz.streak = 0;
+      state.quiz.errors++;
+      quizFeedback(false, verb, ()=>nextQuiz());
+    }
+    saveProgress();
+  }
+  document.getElementById("btnSkip").onclick = function() {
+    state.quiz.streak = 0;
+    state.quiz.errors++;
+    quizFeedback(false, verb, ()=>nextQuiz());
+    saveProgress();
+  }
+  let btn = document.getElementById("btnAccueil");
+  if(btn) btn.onclick = ()=>{
+    state.screen="menu";
+    saveProgress();
+    menu();
+  }
+}
+
+function quizFeedback(success, verb, cb) {
+  document.getElementById("quizFeedback").innerHTML = `
+    <div class="feedback ${success?'good':'bad'}">
+      ${success ? "Bravo ! 🎉" : "Oups…"}<br>
+      <span style="font-size:0.98rem;">Prétérit : <b>${verb.past}</b><br>Participe passé : <b>${verb.part}</b></span><br>
+      <span class="translation">Fr : ${verb.fr}</span>
+      <br>
+      <button class="btn-main" onclick="window.nextQuiz()">Suivant</button>
+      <button class="btn-secondary" onclick="window.setScreen('menu')">Menu</button>
+    </div>
+  `;
+  document.getElementById("quizForm").style.display = "none";
+  window.nextQuiz = function() {
+    state.quiz.current++;
+    if (state.quiz.current >= verbs.length) setScreen("progression");
+    else quiz();
+  }
+}
+
+function revision() {
+  let idx = state.revision.idx;
+  let verb = verbs[idx];
+  document.getElementById("app").innerHTML = `
+    ${btnAccueil()}
+    <div style="display:flex;align-items:center;justify-content:center;margin-bottom:0.7rem;">
+      <img src="${avatars[state.avatar]}" class="user-avatar" alt="avatar">
+      <div class="counter">${idx+1} / ${verbs.length}</div>
+    </div>
+    <div class="verbe-base">Verbe : <span style="color:#7b1fa2;">${verb.base}</span></div>
+    <div class="revise-field">
+      <span class="quiz-label">Prétérit :</span>
+      <span class="revise-answer">${verb.past}</span>
+    </div>
+    <div class="revise-field">
+      <span class="quiz-label">Participe passé :</span>
+      <span class="revise-answer">${verb.part}</span>
+    </div>
+    <div class="translation">Fr : ${verb.fr}</div>
+    <div style="margin-top:1.2rem;">
+      <button class="btn-secondary" ${idx<=0?"disabled":""} id="btnPrev">Précédent</button>
+      <button class="btn-main" ${idx>=verbs.length-1?"disabled":""} id="btnNext">Suivant</button>
+      <button class="btn-secondary" id="btnMenu">Menu</button>
+    </div>
+  `;
+  
+  // Ajout de la navigation par swipe pour mobile
+  let touchStartX = 0;
+  let touchEndX = 0;
+  
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+  }, false);
+  
+  document.addEventListener('touchend', function(e) {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, false);
+  
+  function handleSwipe() {
+    if (touchEndX < touchStartX - 80 && state.revision.idx < verbs.length - 1) {
+      // Swipe gauche - Suivant
+      state.revision.idx++;
+      revision();
+    }
+    if (touchEndX > touchStartX + 80 && state.revision.idx > 0) {
+      // Swipe droite - Précédent
+      state.revision.idx--;
+      revision();
+    }
+  }
+  
+  document.getElementById("btnPrev").onclick = function() {
+    if (state.revision.idx>0) state.revision.idx--;
+    revision();
+  }
+  document.getElementById("btnNext").onclick = function() {
+    if (state.revision.idx<verbs.length-1) state.revision.idx++;
+    revision();
+  }
+  document.getElementById("btnMenu").onclick = function() {
+    setScreen("menu");
+  }
+  let btn = document.getElementById("btnAccueil");
+  if(btn) btn.onclick = ()=>{
+    state.screen="menu";
+    saveProgress();
+    menu();
+  }
+}
+
+function progression() {
+  let badges = "";
+  let streaks = [5, 10, 15, 20];
+  let hasBadge = n => state.quiz.badges && state.quiz.badges.includes(n);
+  badges = streaks.map(n =>
+    `<span class="badge" style="opacity:${hasBadge(n)?1:0.32};">${n} de suite !</span>`
+  ).join("");
+  let percent = Math.round(100*state.quiz.mastered/verbs.length);
+  document.getElementById("app").innerHTML = `
+    ${btnAccueil()}
+    <img src="${avatars[state.avatar]}" class="user-avatar" alt="avatar">
+    <h1>Progression</h1>
+    <div class="stat-row"><span>Verbes maîtrisés :</span><b>${state.quiz.mastered} / ${verbs.length}</b></div>
+    <div class="stat-row"><span>Pourcentage :</span><b>${percent} %</b></div>
+    <div class="stat-row"><span>Score total quiz :</span><b>${state.quiz.score}</b></div>
+    <div class="stat-row"><span>Erreurs :</span><b>${state.quiz.errors}</b></div>
+    <div class="stat-row"><span>Meilleure série :</span><b>${Math.max(0,...state.quiz.badges||[0])}</b></div>
+    <div style="margin:1.2rem 0 0.5rem 0;"><b>Badges série :</b></div>
+    <div class="badge-list">${badges}</div>
+    <button class="btn-main" id="btnMenu">Menu</button>
+    <button class="btn-secondary" id="btnRestart">Recommencer un quiz</button>
+  `;
+  document.getElementById("btnMenu").onclick = function() {
+    setScreen("menu");
+  }
+  document.getElementById("btnRestart").onclick = function() {
+    startQuiz();
+    setScreen("quiz");
+  }
+  let btn = document.getElementById("btnAccueil");
+  if(btn) btn.onclick = ()=>{
+    state.screen="menu";
+    saveProgress();
+    menu();
+  }
+}
+
+function setScreen(screen) {
+  state.screen = screen;
+  saveProgress();
+  render();
+}
+
+// Empêcher le double-tap zoom sur iOS
+document.addEventListener('touchend', function(event) {
+  if (event.target.tagName === 'BUTTON' || 
+      event.target.tagName === 'IMG' || 
+      event.target.tagName === 'INPUT') {
+    event.preventDefault();
+  }
+}, false);
+
+// Désactiver temporairement le défilement sur les swipes
+document.addEventListener('touchmove', function(e) {
+  if (state.screen === 'revision') {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+function render() {
+  switch(state.screen) {
+    case "accueil": accueil(); break;
+    case "menu": menu(); break;
+    case "quiz": quiz(); break;
+    case "revision": revision(); break;
+    case "progression": progression(); break;
+  }
+}
+window.setScreen = setScreen;
+loadProgress();
+if (!state.avatar && state.avatar!==0) state.screen="accueil";
+render();
+
+// Vérifier si l'application peut être installée comme PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(registration => {
+      console.log('Service Worker enregistré');
+    }).catch(error => {
+      console.log('Erreur d\'enregistrement du Service Worker:', error);
+    });
+  });
+}
+</script>
+</body>
+</html>

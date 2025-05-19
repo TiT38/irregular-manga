@@ -1,0 +1,16 @@
+{
+  "name": "Irregular Manga",
+  "short_name": "Irregular Manga",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#c2e9fb",
+  "theme_color": "#c2e9fb",
+  "description": "Apprendre les verbes irréguliers anglais façon manga",
+  "icons": [
+    {
+      "src": "https://api.dicebear.com/7.x/adventurer/png?seed=study",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
